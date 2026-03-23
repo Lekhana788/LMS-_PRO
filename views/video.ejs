@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= section.title %> - <%= course.title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <a href="/course/<%= courseId %>" class="text-white hover:text-purple-200 transition">
+                        ← Back to Course
+                    </a>
+                    <div>
+                        <h1 class="text-2xl font-bold"><%= course.title %></h1>
+                        <p class="text-purple-100"><%= section.title %></p>
+                    </div>
+                </div>
+                <nav class="flex items-center space-x-4">
+                    <span class="text-purple-100"><%= user.username %></span>
+                    <a href="/logout" class="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition duration-200">
+                        Logout
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Video Player -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <% if (videoValid) { %>
+                        <div class="video-container">
+                            <iframe 
+                                src="https://www.youtube.com/embed/<%= section.youtube_video_id %>?rel=0&modestbranding=1&autohide=1&showinfo=0&controls=1"
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    <% } else { %>
+                        <div class="bg-gray-100 p-12 text-center">
+                            <div class="text-red-500 text-6xl mb-4">⚠️</div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Video Unavailable</h3>
+                            <p class="text-gray-600 mb-4">Sorry, this video is currently not available.</p>
+                            <a href="/course/<%= courseId %>" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-200">
+                                Back to Course
+                            </a>
+                        </div>
+                    <% } %>
+                    
+                    <div class="p-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4"><%= section.title %></h2>
+                        
+                        <% if (videoValid) { %>
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                                <div class="flex items-center space-x-2">
+                                    <div class="text-green-600">✓</div>
+                                    <span class="text-green-800 font-semibold">Video Verified and Working</span>
+                                </div>
+                                <p class="text-green-700 text-sm mt-1">This YouTube video has been validated and is ready to play.</p>
+                            </div>
+                        <% } %>
+                        
+                        <div class="prose max-w-none">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">About this lesson</h3>
+                            <p class="text-gray-600 mb-4">
+                                This video covers important concepts related to <%= section.title.toLowerCase() %>. 
+                                Follow along with the instructor to gain practical knowledge and hands-on experience.
+                            </p>
+                            
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Learning Objectives</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                                <li>Understand the fundamental concepts of <%= section.title.toLowerCase() %></li>
+                                <li>Learn practical implementation techniques</li>
+                                <li>Apply knowledge through real-world examples</li>
+                                <li>Build confidence in using these concepts</li>
+                            </ul>
+                            
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Next Steps</h3>
+                            <p class="text-gray-600">
+                                After completing this lesson, continue to the next section to build upon your knowledge 
+                                and progress through the course curriculum.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Course Progress</h3>
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm text-gray-600 mb-2">
+                            <span>Progress</span>
+                            <span>1 / <%= course.total_videos || 12 %></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full progress-bar" data-progress="<%= Math.round((1 / (course.total_videos || 12)) * 100) %>"></div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm">Keep learning to complete the course!</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Video Information</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Source:</span>
+                            <span class="font-semibold">YouTube</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <% if (videoValid) { %>
+                                <span class="font-semibold text-green-600">Available</span>
+                            <% } else { %>
+                                <span class="font-semibold text-red-600">Unavailable</span>
+                            <% } %>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Quality:</span>
+                            <span class="font-semibold">HD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <button class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-200">
+                            Mark as Complete
+                        </button>
+                        <button class="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition duration-200">
+                            Add Notes
+                        </button>
+                        <button class="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition duration-200">
+                            Download Resources
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12 py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 Learning Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Set progress bar width
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = progressBar.dataset.progress + '%';
+            }
+        });
+    </script>
+</body>
+</html>

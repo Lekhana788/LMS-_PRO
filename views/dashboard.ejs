@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Learning Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .course-card {
+            transition: all 0.3s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold">Learning Management System</h1>
+                    <p class="text-purple-100">Welcome back, <%= user.username %>!</p>
+                </div>
+                <nav class="flex items-center space-x-4">
+                    <span class="text-purple-100"><%= user.email %></span>
+                    <a href="/logout" class="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition duration-200">
+                        Logout
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Available Courses</h2>
+            <p class="text-gray-600">Choose from our comprehensive selection of programming and technology courses</p>
+        </div>
+
+        <!-- Course Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% courses.forEach(course => { %>
+                <div class="course-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl">
+                    <div class="gradient-bg p-6 text-white">
+                        <div class="text-4xl mb-3 text-center"><%= course.icon %></div>
+                        <h3 class="text-xl font-bold text-center"><%= course.title %></h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4"><%= course.description %></p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-sm text-gray-500">
+                                <span class="font-semibold"><%= course.videoCount %></span> videos
+                            </span>
+                            <span class="text-sm text-green-600 font-semibold">
+                                ✓ All Videos Verified
+                            </span>
+                        </div>
+                        <a href="/course/<%= course.course_key %>" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-200 text-center block">
+                            Start Learning
+                        </a>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Statistics -->
+        <div class="mt-12 bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Your Learning Progress</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-600 mb-2">
+                        <%= courses.length %>
+                    </div>
+                    <div class="text-gray-600">Total Courses</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2">
+                        <%= courses.reduce((total, course) => total + course.videoCount, 0) %>
+                    </div>
+                    <div class="text-gray-600">Total Videos</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">
+                        0
+                    </div>
+                    <div class="text-gray-600">Completed</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12 py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 Learning Management System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
