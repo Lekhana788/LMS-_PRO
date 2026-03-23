@@ -7,7 +7,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "init-db": "node init-db.js",
-    "build": "npm install && node init-db.js"
+    "build": "npm install && node setup-database.js"
   },
   "keywords": ["lms", "education", "youtube", "learning", "database"],
   "author": "",
