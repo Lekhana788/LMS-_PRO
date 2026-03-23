@@ -225,7 +225,48 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`LMS Server running on http://localhost:${PORT}`);
+// Wait for database initialization before starting server
+const startServer = () => {
+    app.listen(PORT, () => {
+        console.log(`LMS Server running on http://localhost:${PORT}`);
+    });
+};
+
+// Check if database is ready before starting server
+const checkDatabaseReady = () => {
+    return new Promise((resolve) => {
+        const checkInterval = setInterval(() => {
+            db.get("SELECT COUNT(*) as count FROM subjects", (err, row) => {
+                if (!err && row && row.count > 0) {
+                    console.log('Database is ready - starting server');
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            });
+        }, 1000);
+    });
+};
+
+// Initialize database and start server
+const initializeDatabase = () => {
+    return new Promise((resolve, reject) => {
+        db.serialize(() => {
+            db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)");
+            db.run("CREATE TABLE IF NOT EXISTS subjects (id INTEGER PRIMARY KEY AUTOINCREMENT, course_key TEXT, title TEXT)");
+            db.run("CREATE TABLE IF NOT EXISTS videos (id INTEGER PRIMARY KEY AUTOINCREMENT, subject_id INTEGER, youtube_video_id TEXT, order_index INTEGER)");
+            resolve();
+        }, (err) => {
+            reject(err);
+        });
+    });
+};
+
+initializeDatabase().then(() => {
+    console.log('Database initialization completed - starting server');
+    checkDatabaseReady().then(() => {
+        startServer();
+    });
+}).catch(err => {
+    console.error('Database initialization failed:', err);
+    process.exit(1);
 });
