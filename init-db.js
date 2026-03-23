@@ -85,11 +85,13 @@ db.serialize(() => {
     console.log('All tables created successfully');
 });
 
-// Close database connection
-db.close((err) => {
-    if (err) {
-        console.error('Error closing database:', err.message);
-    } else {
-        console.log('Database connection closed');
-    }
-});
+// Close database connection after a short delay to ensure tables are created
+setTimeout(() => {
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing database:', err.message);
+        } else {
+            console.log('Database connection closed');
+        }
+    });
+}, 1000);
