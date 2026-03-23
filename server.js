@@ -8,14 +8,18 @@ const sqlite3 = require('sqlite3').verbose();
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
-// Database connection
-const db = new sqlite3.Database('./lms.db', (err) => {
+// Database connection - handle both local and production environments
+const dbPath = process.env.NODE_ENV === 'production' 
+    ? '/opt/render/project/src/lms.db' 
+    : path.join(__dirname, 'lms.db');
+
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error opening database:', err.message);
     } else {
-        console.log('Connected to SQLite database');
+        console.log('Connected to SQLite database at:', dbPath);
         initializeDatabase();
     }
 });
